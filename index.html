@@ -1,10 +1,21 @@
 <title>DOSY LOGOS</title>
 <style>
+	svg text {
+		font: 10rem monospace;
+		fill: black;
+		opacity: 0;
+	}
 	svg {
+		position: relative;
 		fill: transparent;
 		stroke-linecap: round;
 		stroke-linejoin: round;
 		stroke: black;
+		display: inline-block;
+		width: 100px;
+		height: 100px;
+		outline: 0;
+		-webkit-user-select: none;
 	}
 	svg path:nth-of-type(2) {
 		transform: rotate(120deg);
@@ -13,6 +24,17 @@
 	svg path:nth-of-type(3) {
 		transform: rotate(240deg);
 		transform-origin: 333px 333px;
+	}
+	svg:hover, 
+	svg:active,
+	svg:focus {
+		stroke: blue;		
+		stroke-width: 4px;
+	}
+	svg:hover text, 
+	svg:active text,
+	svg:focus text{
+		opacity: 1.0;
 	}
 </style>
 <script>
@@ -33,21 +55,66 @@
 			"/>
 		`;
 	};
+	let id = 0;;
 	
-	natural();
-	flipEach();
-	skipEach();
+	self.onload = () => {
+		natural();
+		flipEach(Cmds);
+		skipEach(Cmds);
+		flip2(Cmds);
+		flipSkip(Cmds);
+		flip2(Cmds, true);
+		flipSkip(Cmds, true);
+	};
 
 	function natural() {
-		document.documentElement.insertAdjacentHTML('beforeEnd', 
-			`<svg width=666 height=666 viewbox="0 0 666 666">
+		document.body.insertAdjacentHTML('beforeEnd', 
+			`<svg tabindex=1 width=666 height=666 viewbox="0 0 666 666">
+				<text x=50 y=100>${id++}</text>
 				${t(Cmds) + t(Cmds) + t(Cmds)}
 			</svg>`
 		);
 	}
 
-	function flipEach() {
-		Cmds.split('').forEach((c, i, X) => {
+	function flip2(In, destruct = false) {
+		In.split('').forEach((c, i, X) => {
+			let C = destruct ? X : Array.from(X);
+			switch(c) {
+				case "M":
+					break;
+				case "m":
+					[i] = 'l';
+					break;
+				case "l":
+					C[i] = 'm';
+					break;
+			};
+			C = C.join('');
+			flipEach(C, i);
+		});
+	}
+
+	function flipSkip(In, destruct = false) {
+		In.split('').forEach((c, i, X) => {
+			let C = destruct ? X : Array.from(X);
+			switch(c) {
+				case "M":
+					break;
+				case "m":
+					[i] = 'l';
+					break;
+				case "l":
+					C[i] = 'm';
+					break;
+			};
+			C = C.join('');
+			skipEach(C, i);
+		});
+	}
+
+	function flipEach(In, after) {
+		In.split('').forEach((c, i, X) => {
+			if ( after >= 0 && i <= after ) return;
 			let C = Array.from(X);
 			switch(c) {
 				case "M":
@@ -60,19 +127,22 @@
 					break;
 			};
 			C = C.join('');
-			document.documentElement.insertAdjacentHTML('beforeEnd', 
-				`<svg width=666 height=666 viewbox="0 0 666 666">
+			document.body.insertAdjacentHTML('beforeEnd', 
+				`<svg data-id=${id++} tabindex=1 width=666 height=666 viewbox="0 0 666 666">
+					<text x=50 y=100>${id++}</text>
 					${t(C) + t(C) + t(C)}
 				</svg>`
 			);
 		});
 	}
 
-	function skipEach() {
-		Cmds.split('').forEach((c, skipIndex) => {
+	function skipEach(In, after) {
+		In.split('').forEach((c, skipIndex) => {
+			if ( after >= 0 && skipIndex <= after ) return;
 			if ( skipIndex == 0 ) return;	
-			document.documentElement.insertAdjacentHTML('beforeEnd', 
-				`<svg width=666 height=666 viewbox="0 0 666 666">
+			document.body.insertAdjacentHTML('beforeEnd', 
+				`<svg data-id=${id++} tabindex=1 width=666 height=666 viewbox="0 0 666 666">
+					<text x=50 y=100>${id++}</text>
 					${t(Cmds, skipIndex) + t(Cmds, skipIndex) + t(Cmds, skipIndex)}
 				</svg>`
 			);
