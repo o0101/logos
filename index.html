@@ -55,7 +55,37 @@
 	main.filled svg:active {
 		fill: blue;
 	}
+	aside.overlay {
+		position: absolute;
+		position: fixed;
+		z-index: 3;
+		display: none;
+		flex-direction: column;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		align-items: center;
+		justify-content: center;
+		background: white;
+	}
+	.overlay svg {
+		width: 80vmin;
+		height: 80vmin;
+		stroke-width: 1rem;
+	}
+	.overlay svg text {
+		display: none;	
+	}
+	h1.name {
+		font-family: sans-serif;
+		font-size: 15vmin;
+		margin-top: -5vmin;
+	}
 </style>
+<aside class=overlay></aside>
 <main class=lines></main>
 <main class=filled></main>
 <hr>
@@ -189,4 +219,28 @@
 			);
 		});
 	}
+</script>
+<script>
+	const NAME_MARKUP = `<h1 class=name>DOSY</h1>`;
+	const overlay = document.querySelector('aside.overlay');
+	document.body.onclick = ({target}) => {
+		let svg;
+		if ( target.matches('.overlay') || target.closest('.overlay') ) {
+			overlay.style.display = 'none';
+			return;
+		} else if ( target.matches('svg') || target.matches('path') ) {
+			svg = target.closest('svg');	
+		} 
+		if ( !! svg ) {
+			if ( svg.closest('main.alt.filled') ) {
+				svg = `<main class="alt filled">${svg.outerHTML}</main>`
+			} else if ( svg.closest('main.filled') ) {
+				svg = `<main class="filled">${svg.outerHTML}</main>`
+			} else {
+				svg = svg.outerHTML;
+			}
+			overlay.style.display = 'flex';
+			overlay.innerHTML = svg + NAME_MARKUP;
+		}
+	};
 </script>
