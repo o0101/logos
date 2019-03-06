@@ -223,6 +223,8 @@
 <script>
 	const NAME_MARKUP = `<h1 class=name>DOSY</h1>`;
 	const overlay = document.querySelector('aside.overlay');
+	let lastActive = document.activeElement;
+
 	document.body.onclick = ({target}) => {
 		let svg;
 		if ( target.matches('.overlay') || target.closest('.overlay') ) {
@@ -231,6 +233,26 @@
 		} else if ( target.matches('svg') || target.matches('path') ) {
 			svg = target.closest('svg');	
 		} 
+		renderOverlay(svg);
+	};
+	self.onkeydown = ({key}) => {
+		if ( key == 'Escape' ) {
+			overlay.style.display = 'none';
+		} else if ( key == 'Enter' ) {
+			if ( document.activeElement.matches('svg') ) {
+				renderOverlay(document.activeElement);
+			}
+		}
+	};
+	setInterval(() => {
+		if ( document.activeElement !== lastActive ) {
+			lastActive = document.activeElement;
+			if ( lastActive.matches('svg') && overlay.style.display == 'flex' ) {
+				renderOverlay(lastActive);
+			}
+		}
+	}, 50);
+	function renderOverlay(svg) {
 		if ( !! svg ) {
 			if ( svg.closest('main.alt.filled') ) {
 				svg = `<main class="alt filled">${svg.outerHTML}</main>`
@@ -242,5 +264,5 @@
 			overlay.style.display = 'flex';
 			overlay.innerHTML = svg + NAME_MARKUP;
 		}
-	};
+	}
 </script>
