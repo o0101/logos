@@ -1,0 +1,81 @@
+<title>DOSY LOGOS</title>
+<style>
+	svg {
+		fill: transparent;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		stroke: black;
+	}
+	svg path:nth-of-type(2) {
+		transform: rotate(120deg);
+		transform-origin: 333px 333px;
+	}
+	svg path:nth-of-type(3) {
+		transform: rotate(240deg);
+		transform-origin: 333px 333px;
+	}
+</style>
+<script>
+	const Cmds = "Mllmlllllmlll";
+	const t = (commands, skipIndex = -1) => {
+ 		let coords = [333, 333, 0, -100, 86.6, -50, -86.6, 50, -86.6, -50, 86.6, -50, 86.6, 50, 0, 100, -86.6, 50, -86.6, -50, 0, -100, -86.6, 50, 0, 100];
+		return `
+			<path d="
+				${commands.split('').map((c, i) => {
+					if ( skipIndex >= 0 && i == skipIndex ) {
+						coords.shift(); coords.shift();
+						return;
+					};
+					return `
+						${c} ${coords.shift()} ${coords.shift()}
+					`;
+				}).join(' ')}
+			"/>
+		`;
+	};
+	
+	natural();
+	flipEach();
+	skipEach();
+
+	function natural() {
+		document.documentElement.insertAdjacentHTML('beforeEnd', 
+			`<svg width=666 height=666 viewbox="0 0 666 666">
+				${t(Cmds) + t(Cmds) + t(Cmds)}
+			</svg>`
+		);
+	}
+
+	function flipEach() {
+		Cmds.split('').forEach((c, i, X) => {
+			let C = Array.from(X);
+			switch(c) {
+				case "M":
+					break;
+				case "m":
+					[i] = 'l';
+					break;
+				case "l":
+					C[i] = 'm';
+					break;
+			};
+			C = C.join('');
+			document.documentElement.insertAdjacentHTML('beforeEnd', 
+				`<svg width=666 height=666 viewbox="0 0 666 666">
+					${t(C) + t(C) + t(C)}
+				</svg>`
+			);
+		});
+	}
+
+	function skipEach() {
+		Cmds.split('').forEach((c, skipIndex) => {
+			if ( skipIndex == 0 ) return;	
+			document.documentElement.insertAdjacentHTML('beforeEnd', 
+				`<svg width=666 height=666 viewbox="0 0 666 666">
+					${t(Cmds, skipIndex) + t(Cmds, skipIndex) + t(Cmds, skipIndex)}
+				</svg>`
+			);
+		});
+	}
+</script>
