@@ -17,6 +17,19 @@
 		outline: 0;
 		-webkit-user-select: none;
 	}
+	main.filled svg {
+		fill: black;
+	}
+	/**
+	main.alt.filled svg path:nth-of-type(2n+1) {
+		fill: red;
+		stroke: transparent;
+	}
+	**/
+	main.alt.filled svg path:nth-of-type(2n) {
+		fill: red;
+		stroke: transparent;
+	}
 	svg path:nth-of-type(2) {
 		transform: rotate(120deg);
 		transform-origin: 333px 333px;
@@ -36,7 +49,16 @@
 	svg:focus text{
 		opacity: 1.0;
 	}
+	main.filled svg:focus,
+	main.filled svg:hover,
+	main.filled svg:active {
+		fill: blue;
+	}
 </style>
+<main class=lines></main>
+<main class=filled></main>
+<hr>
+<main class="alt filled"></main>
 <script>
 	const Cmds = "Mllmlllllmlll";
 	const t = (commands, skipIndex = -1) => {
@@ -55,9 +77,27 @@
 			"/>
 		`;
 	};
-	let id = 0;;
+	let id = 0;
+	let attach;
 	
 	self.onload = () => {
+		attach = document.querySelector('main.lines');
+		natural();
+		flipEach(Cmds);
+		skipEach(Cmds);
+		flip2(Cmds);
+		flipSkip(Cmds);
+		flip2(Cmds, true);
+		flipSkip(Cmds, true);
+		attach = document.querySelector('main.filled');
+		natural();
+		flipEach(Cmds);
+		skipEach(Cmds);
+		flip2(Cmds);
+		flipSkip(Cmds);
+		flip2(Cmds, true);
+		flipSkip(Cmds, true);
+		attach = document.querySelector('main.alt.filled');
 		natural();
 		flipEach(Cmds);
 		skipEach(Cmds);
@@ -68,7 +108,7 @@
 	};
 
 	function natural() {
-		document.body.insertAdjacentHTML('beforeEnd', 
+		attach.insertAdjacentHTML('beforeEnd', 
 			`<svg tabindex=1 width=666 height=666 viewbox="0 0 666 666">
 				<text x=50 y=100>${id++}</text>
 				${t(Cmds) + t(Cmds) + t(Cmds)}
@@ -127,7 +167,7 @@
 					break;
 			};
 			C = C.join('');
-			document.body.insertAdjacentHTML('beforeEnd', 
+			attach.insertAdjacentHTML('beforeEnd', 
 				`<svg data-id=${id++} tabindex=1 width=666 height=666 viewbox="0 0 666 666">
 					<text x=50 y=100>${id++}</text>
 					${t(C) + t(C) + t(C)}
@@ -140,7 +180,7 @@
 		In.split('').forEach((c, skipIndex) => {
 			if ( after >= 0 && skipIndex <= after ) return;
 			if ( skipIndex == 0 ) return;	
-			document.body.insertAdjacentHTML('beforeEnd', 
+			attach.insertAdjacentHTML('beforeEnd', 
 				`<svg data-id=${id++} tabindex=1 width=666 height=666 viewbox="0 0 666 666">
 					<text x=50 y=100>${id++}</text>
 					${t(Cmds, skipIndex) + t(Cmds, skipIndex) + t(Cmds, skipIndex)}
